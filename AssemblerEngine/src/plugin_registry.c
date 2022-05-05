@@ -1,6 +1,7 @@
 #include "AssemblerEngine/plugin_registry.h"
 #include "AssemblerEngine/api_registry.h"
 #include "filesystem.h"
+#include "hashmap.h"
 
 #include <stdlib.h>
 
@@ -45,59 +46,43 @@ struct ae_plugin
 {
 	ae_plugin_load_fn load;
 	ae_plugin_unload_fn unload;
-	LIBRARY_TYPE module;
-	char name[AE_FILENAME_MAX_LENGTH];
+	LIBRARY_TYPE library;
 	char path[AE_PATH_MAX_LENGTH];
 	char tmp_path[AE_PATH_MAX_LENGTH];
 };
 
 struct ae_plugin_registry_o
 {
-	struct ae_plugin* plugins;
-	uint32_t size;
-	uint32_t count;
+	struct ae_hashmap plugins;
 };
 
 static void ae_plugin_load(struct ae_plugin_registry_o* registry, const char* dir, const char* name)
 {
-	LIBRARY_TYPE plugin = NULL;
+	LIBRARY_TYPE library = NULL;
 
-	plugin = LOAD_LIBRARY(dir);
+	library = LOAD_LIBRARY(dir);
 
-	if (plugin)
+	if (library)
 	{
-		ae_plugin_load_fn load_fn = (ae_plugin_load_fn)LOAD_FUNCTION(plugin, "plugin_load");
-		ae_plugin_unload_fn unload_fn = (ae_plugin_unload_fn)LOAD_FUNCTION(plugin, "plugin_unload");
+		ae_plugin_load_fn load_fn = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
+		ae_plugin_unload_fn unload_fn = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
 
 		if (!load_fn || !unload_fn)
 		{
-			UNLOAD_LIBRARY(plugin);
+			UNLOAD_LIBRARY(library);
 			return 0;
 		}
 
-		if (registry->size == registry->count)
-		{
-			struct ae_plugin* tmp = NULL;
+		struct ae_plugin plugin = {
+			.path = dir,
+			.library = library,
+			.load = load_fn,
+			.unload = unload_fn
+		};
 
-			if (!(tmp = realloc(registry->plugins, sizeof(*registry->plugins) * registry->size + 1)))
-			{
-				UNLOAD_LIBRARY(plugin);
-				return 0;
-			}
+		ae_hashmap_insert(&registry->plugins, name, name, sizeof(plugin));
 
-			registry->plugins = tmp;
-			registry->size++;
-		}
-
-		uint32_t index = registry->count;
-
-		memcpy(registry->plugins[index].path, dir, strlen(dir) + 1);
-		memcpy(registry->plugins[index].name, name, strlen(name) + 1);
-
-		registry->plugins[index].load = load_fn;
-		registry->plugins[index].unload = unload_fn;
-		registry->plugins[index].load(ae_global_api_registry_api, false);
-		registry->count++;
+		plugin.load(registry, false);
 	}
 }
 
@@ -116,16 +101,6 @@ struct ae_plugin_registry_api* ae_plugin_registry_new()
 		return NULL;
 	}
 
-	if (!(self->registry->plugins = malloc(sizeof(*self->registry->plugins))))
-	{
-		free(self->registry);
-		free(self);
-		return NULL;
-	}
-
-	self->registry->count = 0;
-	self->registry->size = 0;
-
 	self->load = ae_plugin_registry_load;
 	self->unload = ae_plugin_registry_unload;
 	self->reload = ae_plugin_registry_reload;
@@ -135,12 +110,7 @@ struct ae_plugin_registry_api* ae_plugin_registry_new()
 
 void ae_plugin_registry_free(struct ae_plugin_registry_api* self)
 {
-	for (uint32_t i = 0; i < self->registry->count; ++i)
-	{
-		UNLOAD_LIBRARY(self->registry->plugins[i].module);
-	}
-
-	free(self->registry->plugins);
+	ae_hashmap_free(self);
 	free(self->registry);
 	free(self);
 }
