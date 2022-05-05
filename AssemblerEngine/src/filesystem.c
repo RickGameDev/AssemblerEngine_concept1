@@ -125,12 +125,6 @@ const char* ae_filesystem_it_get_name(struct ae_filesystem_it* it)
 #endif // WIN32
 }
 
-//struct ae_tmp_path
-//{
-//	uint32_t length;
-//	const char* path;
-//};
-
 void ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path* path)
 {
 	if (it == NULL)
