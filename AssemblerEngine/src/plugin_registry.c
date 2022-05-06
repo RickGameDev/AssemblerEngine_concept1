@@ -130,7 +130,7 @@ void ae_plugin_registry_load(struct ae_plugin_registry_api* self, const char* di
 	{
 		while (ae_filesystem_it_next(&it))
 		{
-			if (ae_filesystem_it_get_extension(&it) == LIBRARY_EXTENSION)
+			if (strcmp(ae_filesystem_it_get_extension(&it), LIBRARY_EXTENSION) == 0)
 			{
 				ae_filesystem_it_get_name(&it, name, AE_FILENAME_MAX_LENGTH);
 				ae_filesystem_it_get_full_path(&it, &path);
@@ -138,7 +138,7 @@ void ae_plugin_registry_load(struct ae_plugin_registry_api* self, const char* di
 			}
 		}
 	}
-	else
+	else if (strcmp(ae_filesystem_it_get_extension(&it), LIBRARY_EXTENSION) == 0)
 	{
 		ae_filesystem_it_get_name(&it, name, AE_FILENAME_MAX_LENGTH);
 		ae_filesystem_it_get_full_path(&it, &path);
