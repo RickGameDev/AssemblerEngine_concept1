@@ -97,7 +97,7 @@ void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, con
 	}
 
 	if (map->count >= 3 * map->size)
-		hash_table_resize(map);
+		ae_hashmap_resize(map);
 
 	if (!(node = malloc(sizeof(*node) + key_length)))
 		return;
