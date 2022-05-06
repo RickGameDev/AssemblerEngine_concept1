@@ -131,7 +131,7 @@ void* ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const u
 	if (map->count >= 3 * map->size)
 		ae_hashmap_resize(map);
 
-	if (!(node = malloc(sizeof(*node) + key_length)))
+	if (!(node = malloc(sizeof(*node) + key_length + 1)))
 		return NULL;
 
 	if (!(node->value = malloc(size)))
