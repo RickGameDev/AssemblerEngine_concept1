@@ -123,13 +123,13 @@ void* ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const u
 	uint32_t hash = ae_hash_string(key, key_length);
 	uint32_t index = hash & map->mask;
 
-	struct ae_hash_node* node = hash_table_find(map, key, hash, key_length);
+	struct ae_hash_node* node = ae_hashmap_find(map, key, hash, key_length);
 
 	if (node)
 		return node;
 
 	if (map->count >= 3 * map->size)
-		ae_hash_table_resize(map);
+		ae_hashmap_resize(map);
 
 	if (!(node = malloc(sizeof(*node) + key_length)))
 		return NULL;
