@@ -128,6 +128,17 @@ struct ae_api_registry_api* ae_api_registry_new()
 	return self;
 }
 
+void ae_api_registry_free(struct ae_api_registry_api* self)
+{
+	if (self)
+	{
+		ae_hashmap_free(&self->registry->apis);
+		ae_hashmap_free(&self->registry->interfaces);
+		free(self->registry);
+		free(self);
+	}
+}
+
 void ae_api_registry_set_api(struct ae_api_registry_api* self, const char* type, void* api, const uint32_t size)
 {
 	ae_hashmap_insert(&self->registry->apis, type, api, size);
