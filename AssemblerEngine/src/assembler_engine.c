@@ -2,8 +2,8 @@
 
 #include <assert.h>
 
-static struct ae_api_registry_api* ae_global_api_registry_api = NULL;
-static struct ae_plugin_registry_api* ae_global_plugin_registry_api = NULL;
+struct ae_api_registry_api* ae_global_api_registry_api = NULL;
+struct ae_plugin_registry_api* ae_global_plugin_registry_api = NULL;
 
 bool ae_assembler_engine_init()
 {
