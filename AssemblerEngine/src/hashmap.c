@@ -4,7 +4,7 @@
 #include <string.h>
 
 // fnva1 hash
-static uint32_t hash_string(const char* str, uint32_t length)
+static uint32_t ae_hash_string(const char* str, uint32_t length)
 {
 	unsigned char* p = (unsigned char*)str;
 	unsigned long int h = 2166136261UL;
@@ -63,7 +63,7 @@ static void ae_hashmap_resize(struct ae_hashmap* map)
 	map->mask = new_mask;
 }
 
-void ae_ae_hashmap_init(struct ae_hashmap* map)
+void ae_hashmap_init(struct ae_hashmap* map)
 {
 	uint32_t start_size = 16, i;
 
@@ -82,10 +82,10 @@ void ae_ae_hashmap_init(struct ae_hashmap* map)
 	map->max_chain = 0;
 }
 
-void ae_ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, const uint32_t size)
+void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, const uint32_t size)
 {
 	uint32_t key_length = strlen(key);
-	uint32_t hash = hash_string(key, key_length);
+	uint32_t hash = ae_hash_string(key, key_length);
 	uint32_t index = hash & map->mask;
 
 	struct ae_hash_node* node = ae_hashmap_find(map, key, hash, key_length);
@@ -117,10 +117,10 @@ void ae_ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, 
 	map->count++;
 }
 
-void* ae_ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const uint32_t size)
+void* ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const uint32_t size)
 {
 	uint32_t key_length = strlen(key);
-	uint32_t hash = hash_string(key, key_length);
+	uint32_t hash = ae_hash_string(key, key_length);
 	uint32_t index = hash & map->mask;
 
 	struct ae_hash_node* node = hash_table_find(map, key, hash, key_length);
@@ -150,12 +150,12 @@ void* ae_ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, cons
 	return node->value;
 }
 
-void ae_ae_hashmap_remove(struct ae_hashmap* map, const char* key)
+void ae_hashmap_remove(struct ae_hashmap* map, const char* key)
 {
 
 }
 
-void ae_ae_hashmap_free(struct ae_hashmap* map)
+void ae_hashmap_free(struct ae_hashmap* map)
 {
 	free(map->buckets);
 }
