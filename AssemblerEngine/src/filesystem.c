@@ -132,7 +132,7 @@ void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32
 		str_size = size;
 
 	memcpy(buffer, it->data.cFileName, str_size);
-	buffer[str_size + 1] = '\0';
+	buffer[str_size] = '\0';
 #endif // WIN32
 }
 
@@ -148,7 +148,7 @@ void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffe
 		str_size = size;
 
 	memcpy(buffer, it->data.cFileName, str_size);
-	buffer[str_size + 1] = '\0';
+	buffer[str_size] = '\0';
 #endif // WIN32
 }
 
