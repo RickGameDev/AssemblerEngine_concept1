@@ -4,6 +4,7 @@
 #include "hashmap.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -100,6 +101,8 @@ struct ae_plugin_registry_api* ae_plugin_registry_new()
 		free(self);
 		return NULL;
 	}
+
+	ae_hashmap_init(&self->registry->plugins);
 
 	self->load = ae_plugin_registry_load;
 	self->unload = ae_plugin_registry_unload;
