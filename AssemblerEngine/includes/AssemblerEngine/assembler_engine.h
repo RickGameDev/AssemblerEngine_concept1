@@ -6,4 +6,4 @@
 #include <stdbool.h>
 
 bool ae_assembler_engine_init();
-void ae_api_registry_api_free();
+void ae_assembler_engine_free();
