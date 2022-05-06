@@ -37,9 +37,9 @@
 #endif
 
 #if defined _WIN32
-#define LIBRARY_EXTENSION ".dll"
+#define LIBRARY_EXTENSION "dll"
 #elif defined __linux
-#define LIBRARY_EXTENSION ".so"
+#define LIBRARY_EXTENSION "so"
 #endif
 
 struct ae_plugin
