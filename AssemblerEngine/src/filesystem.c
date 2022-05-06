@@ -25,6 +25,9 @@ void ae_path_init(struct ae_path* path, char* root)
 		path->length = length;
 	}
 
+	path->name = path->path[path->length];
+	path->extension = strchr(path->name + 1, '.');
+
 	if (path->path[path->length] == AE_PATH_SEPERATOR)
 		path->path[path->length] = '\0';
 }
@@ -39,6 +42,9 @@ void ae_path_append(struct ae_path* path, struct ae_path* path_to_append)
 		path->path[path->length] = AE_PATH_SEPERATOR;
 		path->length++;
 	}
+
+	path->name = path->path[path->length];
+	path->extension = strchr(path->name + 1, '.');
 
 	memcpy(&path->path[path->length], path_to_append->path, path_to_append->length);
 
@@ -115,13 +121,40 @@ bool ae_filesystem_it_next(struct ae_filesystem_it* it)
 	return false;
 }
 
-const char* ae_filesystem_it_get_name(struct ae_filesystem_it* it)
+void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32_t size)
 {
 	if (it == NULL)
 		return NULL;
 
 #ifdef WIN32
-	return it->data.cFileName;
+	char* ext = strrchr(it->data.cFileName, '.');
+
+	size_t str_size = strlen(it->data.cFileName);
+
+	if (ext)
+		str_size = (size_t)(ext - it->data.cFileName);
+
+	if (str_size > size)
+		str_size = size;
+
+	memcpy(buffer, it->data.cFileName, str_size);
+	buffer[str_size + 1] = '\0';
+#endif // WIN32
+}
+
+void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffer, uint32_t size)
+{
+	if (it == NULL)
+		return NULL;
+
+#ifdef WIN32
+	size_t str_size = strlen(it->data.cFileName);
+
+	if (str_size > size)
+		str_size = size;
+
+	memcpy(buffer, it->data.cFileName, str_size);
+	buffer[str_size + 1] = '\0';
 #endif // WIN32
 }
 

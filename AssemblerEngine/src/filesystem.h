@@ -28,6 +28,8 @@
 struct ae_path
 {
 	uint32_t length;
+	char* name;
+	char* extension;
 	char path[AE_PATH_MAX_LENGTH];
 };
 
@@ -50,6 +52,7 @@ bool ae_filesystem_it_next(struct ae_filesystem_it* it);
 
 void ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path* path);
 const bool ae_filesystem_it_is_dir(struct ae_filesystem_it* it);
-const char* ae_filesystem_it_get_name(struct ae_filesystem_it* it);
+void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32_t size);
+void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffer, uint32_t size);
 const char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it);
 const size_t ae_filesystem_it_get_size(struct ae_filesystem_it* it);
