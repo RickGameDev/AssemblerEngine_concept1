@@ -25,9 +25,6 @@ void ae_path_init(struct ae_path* path, char* root)
 		path->length = length;
 	}
 
-	path->name = path->path[path->length];
-	path->extension = strchr(path->name + 1, '.');
-
 	if (path->path[path->length] == AE_PATH_SEPERATOR)
 		path->path[path->length] = '\0';
 }
@@ -42,9 +39,6 @@ void ae_path_append(struct ae_path* path, struct ae_path* path_to_append)
 		path->path[path->length] = AE_PATH_SEPERATOR;
 		path->length++;
 	}
-
-	path->name = path->path[path->length];
-	path->extension = strchr(path->name + 1, '.');
 
 	memcpy(&path->path[path->length], path_to_append->path, path_to_append->length);
 

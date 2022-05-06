@@ -28,8 +28,6 @@
 struct ae_path
 {
 	uint32_t length;
-	char* name;
-	char* extension;
 	char path[AE_PATH_MAX_LENGTH];
 };
 
