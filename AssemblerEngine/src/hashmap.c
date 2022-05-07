@@ -1,5 +1,10 @@
 #include "hashmap.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif // _WIN32
+
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -63,6 +68,16 @@ static void ae_hashmap_resize(struct ae_hashmap* map)
 	map->mask = new_mask;
 }
 
+static bool make_executable(void* ptr, size_t size)
+{
+#ifdef _WIN32
+	long unsigned int out_protect;
+	if (!VirtualProtect(ptr, size, PAGE_EXECUTE_READWRITE, &out_protect))
+		return false;
+#endif
+	return true;
+}
+
 void ae_hashmap_init(struct ae_hashmap* map)
 {
 	uint32_t start_size = 16, i;
@@ -92,7 +107,9 @@ void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, con
 
 	if (node)
 	{
-		memcpy(node->value, value, size);
+		if (make_executable(node->value, size))
+			memcpy(node->value, value, size);
+
 		return;
 	}
 
@@ -107,8 +124,10 @@ void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, con
 		free(node);
 		return;
 	}
+	
+	if (make_executable(node->value, size))
+		memcpy(node->value, value, size);
 
-	memcpy(node->value, value, size);
 	memcpy(node->key, key, (size_t)key_length + 1);
 
 	node->key_hash = hash;
