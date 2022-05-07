@@ -83,7 +83,7 @@ static void ae_plugin_load(struct ae_plugin_registry_o* registry, const char* di
 
 		ae_hashmap_insert(&registry->plugins, name, &plugin, sizeof(plugin));
 
-		plugin.load(registry, false);
+		plugin.load(ae_global_api_registry_api, false);
 	}
 }
 
