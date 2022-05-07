@@ -25,5 +25,5 @@ void ae_assembler_engine_free()
 	assert(!ae_global_plugin_registry_api);
 
 	ae_plugin_registry_free(ae_global_plugin_registry_api);
-	ae_api_registry_api_free(ae_global_api_registry_api);
+	ae_api_registry_free(ae_global_api_registry_api);
 }
