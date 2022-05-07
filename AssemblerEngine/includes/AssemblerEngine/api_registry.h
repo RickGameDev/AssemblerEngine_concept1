@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AssemblerEngine/api_registry_api.h"
+#include "apis/api_registry.h"
 
 struct ae_api_registry_api* ae_api_registry_new();
 void ae_api_registry_free(struct ae_api_registry_api* self);
