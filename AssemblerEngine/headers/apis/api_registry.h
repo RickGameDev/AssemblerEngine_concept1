@@ -64,4 +64,4 @@ struct ae_api_registry_api
 };
 
 #define ae_get_api(reg, TYPE) reg->get_api(reg, #TYPE, sizeof(struct TYPE))
-#define ae_set_api(reg, TYPE, INTERF) reg->set_api(reg, #TYPE, &INTERF, sizeof(struct INTERF))
+#define ae_set_api(reg, TYPE, INTERF) reg->set_api(reg, #TYPE, &INTERF, sizeof(struct TYPE))
