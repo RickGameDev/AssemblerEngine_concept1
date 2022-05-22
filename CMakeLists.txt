@@ -7,4 +7,12 @@ project (AssemblerEngine
 	HOMEPAGE_URL "https://github.com/RickGameDev/AssemblerEngine"
 )
 
-add_subdirectory ("AssemblerEngine")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
+
+add_subdirectory (AssemblerEngine.API)
+add_subdirectory (AssemblerEngine.Plugins)
+add_subdirectory (AssemblerEngine.Core)
+add_subdirectory (AssemblerEngine)

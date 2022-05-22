@@ -1,0 +1,5 @@
+add_subdirectory(ae_opengl_backend)
+add_subdirectory(ae_window)
+add_subdirectory(ae_logging)
+add_subdirectory(ae_camera)
+add_subdirectory(ae_imgui)

@@ -1,10 +1,4 @@
-﻿add_library(AssemblerEngine STATIC 
-"src/plugin_registry.c" 
-"src/api_registry.c" 
-"src/filesystem.c" 
-"src/hashmap.c" 
-"src/assembler_engine.c")
-target_include_directories(AssemblerEngine PUBLIC "includes" "headers")
+﻿add_executable(AssemblerEngine "src/main.c" )
 
-add_library(AssemblerEngine_api INTERFACE)
-target_include_directories(AssemblerEngine_api INTERFACE "headers")
+target_link_libraries(AssemblerEngine PRIVATE AssemblerEngine.Core)
+add_dependencies(AssemblerEngine ae_camera ae_imgui ae_logging ae_opengl_backend ae_window)
