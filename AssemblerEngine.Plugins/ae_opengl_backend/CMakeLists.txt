@@ -6,7 +6,7 @@ if (WIN32)
 	"opengl_shader.c"
 	"opengl_renderer.c")
 elseif(UNIX)
-	add_library(ae_window SHARED
+	add_library(ae_opengl_backend SHARED
 	"glad.c"
 	"linux_opengl_backend.c" 
 	"opengl_shader.c"
