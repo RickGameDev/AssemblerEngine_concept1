@@ -52,29 +52,6 @@ static PFNWGLGETPROCADDRESSPROC_PRIVATE gladGetProcAddressPtr;
     #define IS_UWP 1
   #endif
 #endif
-
-static
-int open_gl(void) {
-#ifndef IS_UWP
-    libGL = LoadLibraryW(L"opengl32.dll");
-    if(libGL != NULL) {
-        void (* tmp)(void);
-        tmp = (void(*)(void)) GetProcAddress(libGL, "wglGetProcAddress");
-        gladGetProcAddressPtr = (PFNWGLGETPROCADDRESSPROC_PRIVATE) tmp;
-        return gladGetProcAddressPtr != NULL;
-    }
-#endif
-
-    return 0;
-}
-
-static
-void close_gl(void) {
-    if(libGL != NULL) {
-        FreeLibrary((HMODULE) libGL);
-        libGL = NULL;
-    }
-}
 #else
 #include <dlfcn.h>
 static void* libGL;
@@ -123,38 +100,6 @@ void close_gl(void) {
     }
 }
 #endif
-
-static
-void* get_proc(const char *namez) {
-    void* result = NULL;
-    if(libGL == NULL) return NULL;
-
-#if !defined(__APPLE__) && !defined(__HAIKU__)
-    if(gladGetProcAddressPtr != NULL) {
-        result = gladGetProcAddressPtr(namez);
-    }
-#endif
-    if(result == NULL) {
-#if defined(_WIN32) || defined(__CYGWIN__)
-        result = (void*)GetProcAddress((HMODULE) libGL, namez);
-#else
-        result = dlsym(libGL, namez);
-#endif
-    }
-
-    return result;
-}
-
-//int gladLoadGL(void) {
-//    int status = 0;
-//
-//    if(open_gl()) {
-//        status = gladLoadGLLoader(&get_proc);
-//        close_gl();
-//    }
-//
-//    return status;
-//}
 
 struct gladGLversionStruct GLVersion = { 0, 0 };
 
