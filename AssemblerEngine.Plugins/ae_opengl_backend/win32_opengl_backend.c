@@ -37,6 +37,10 @@ static HMODULE					 opengl_instance = NULL;
 static struct ae_opengl_backend* render_backend = NULL;
 static struct ae_window_api*	 ae_window_api = NULL;
 
+PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = NULL;
+PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
+
+
 void opengl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
 	AE_UNREFERENCED_PARAMETER(length);
@@ -110,12 +114,12 @@ void opengl_message_callback(GLenum source, GLenum type, GLuint id, GLenum sever
 	printf("%s, %s, %s, %i: %s \n", src_str, type_str, severity_str, id, message);
 }
 
-static opengl_fn opengl_backend_get_opengl_proc_address(const char* name)
+static GLADvoidfn opengl_backend_get_opengl_proc_address(const char* name)
 {
-	void* proc = (void*)wglGetProcAddress(name);
+	GLADvoidfn proc = (GLADvoidfn)wglGetProcAddress(name);
 
 	if (!proc)
-		proc = (void*)GetProcAddress(opengl_instance, name);
+		proc =  (GLADvoidfn)GetProcAddress(opengl_instance, name);
 
 	return proc;
 }
@@ -202,8 +206,8 @@ static struct ae_opengl_backend* opengl_get_or_create()
 
 	opengl_instance = LoadLibrary(TEXT("opengl32.dll"));
 
-	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)opengl_backend_get_opengl_proc_address("wglChoosePixelFormatARB");
-	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)opengl_backend_get_opengl_proc_address("wglCreateContextAttribsARB");
+	wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)opengl_backend_get_opengl_proc_address("wglChoosePixelFormatARB");
+	wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)opengl_backend_get_opengl_proc_address("wglCreateContextAttribsARB");
 
 	const int pixelAttribs[] = {
 		WGL_DRAW_TO_WINDOW_ARB, 1,

@@ -52,7 +52,8 @@ struct gladGLversionStruct {
     int minor;
 };
 
-typedef void* (* GLADloadproc)(const char *name);
+typedef void (*GLADvoidfn)(void);
+typedef GLADvoidfn(*GLADloadproc)(const char* name);
 
 #ifndef GLAPI
 # if defined(GLAD_GLAPI_EXPORT)

@@ -145,16 +145,16 @@ void* get_proc(const char *namez) {
     return result;
 }
 
-int gladLoadGL(void) {
-    int status = 0;
-
-    if(open_gl()) {
-        status = gladLoadGLLoader(&get_proc);
-        close_gl();
-    }
-
-    return status;
-}
+//int gladLoadGL(void) {
+//    int status = 0;
+//
+//    if(open_gl()) {
+//        status = gladLoadGLLoader(&get_proc);
+//        close_gl();
+//    }
+//
+//    return status;
+//}
 
 struct gladGLversionStruct GLVersion = { 0, 0 };
 
