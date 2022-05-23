@@ -36,7 +36,7 @@ struct ae_camera_api* camera_api = NULL;
 static struct ae_render_batch* render_batch = NULL;
 static struct ae_camera* camera = NULL;
 
-static struct ae_imgui_context context = { 0 };
+struct ae_imgui_context context = { 0 };
 static struct ae_draw_params draw_data = { .position = {0.0f, 0.0f, -0.1f } };
 static struct ae_textured_draw_params draw_data_textured = { 0 };
 static struct ae_create_window_params child_window_params = { 0 };
@@ -93,7 +93,7 @@ static void ae_imgui_init(struct ae_window* window)
 	float T = window->position[0];
 	float B = window->position[0] + window->size[1];
 
-	const mat4 ortho = {
+	mat4 ortho = {
 		{ 2.0f / (R - L),		0.0f,				0.0f,	0.0f },
 		{ 0.0f,					2.0f / (T - B),		0.0f,	0.0f },
 		{ 0.0f,					0.0f,			   -1.0f,	0.0f },
@@ -108,6 +108,8 @@ static void ae_imgui_init(struct ae_window* window)
 //-----------------------------------------------------------------------------
 void ae_imgui_start_viewport(const char* name)
 {
+	AE_UNREFERENCED_PARAMETER(name);
+
 	struct ae_imgui_viewport* parent_viewport = vector_viewport_ptr_at(&context.viewport_stack, context.current_viewport_index);
 	struct ae_imgui_viewport* current_viewport = NULL;
 
@@ -136,7 +138,7 @@ void ae_imgui_start_viewport(const char* name)
 	render_api->render_batch_start(render_batch);
 
 	ae_vec2_copy(size, draw_data.size);
-	ae_vec2_copy(current_viewport->position, &draw_data.position);
+	ae_vec2_copy(&current_viewport->position[0], &draw_data.position[0]);
 	ae_vec4_copy(bg_color, draw_data.color);
 
 	render_api->render_batch_draw(render_batch, &draw_data);
@@ -240,8 +242,10 @@ static struct ae_imgui_api imgui_api = {
 	.styles_pop_background_color = ae_imgui_styles_pop_background_color
 };
 
-AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
+AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)
 {
+	AE_UNREFERENCED_PARAMETER(reload);
+
 	window_api = ae_get_api(registry, ae_window_api);
 	render_backend_api = ae_get_api(registry, ae_opengl_backend_api);
 	render_api = ae_get_api(registry, ae_renderer_api);
@@ -250,7 +254,7 @@ AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
 	ae_set_api(registry, ae_imgui_api, &imgui_api);
 }
 
-AE_DLL_EXPORT plugin_unload(struct ae_api_registry_api* registry)
+AE_DLL_EXPORT void plugin_unload(struct ae_api_registry_api* registry)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
 }

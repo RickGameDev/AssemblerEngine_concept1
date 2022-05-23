@@ -27,7 +27,7 @@ struct ae_logger_event
 	int32_t line;
 };
 
-typedef void (*ae_logger_log_fn)(struct logger_event* event);
+typedef void (*ae_logger_log_fn)(const struct ae_logger* const logger, struct ae_logger_event* event);
 
 static const char* level_strings[] = {
   "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
@@ -55,9 +55,9 @@ struct ae_logger
 
 static struct ae_logger* main_logger = NULL;
 
-static void ae_on_log_to_console(const struct ae_logger* const logger, struct ae_logger_event* event)
+static void ae_on_log_to_console(struct ae_logger_event* event)
 {
-	char buf[16];
+	char buf[16] = { 0 };
 	buf[strftime(buf, sizeof(buf), "%H:%M:%S", &event->time)] = '\0';
 #ifdef LOGGER_USE_COLOR
 	fprintf(
@@ -84,9 +84,9 @@ static void ae_on_log_to_console(const struct ae_logger* const logger, struct ae
 	fflush(event->data);
 }
 
-static void ae_on_log_to_file(const struct ae_logger* const logger, struct ae_logger_event* event)
+static void ae_on_log_to_file(struct ae_logger_event* event)
 {
-	char buf[64];
+	char buf[64] = { 0 };
 	buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &event->time)] = '\0';
 	fprintf(
 		event->data,
@@ -107,23 +107,23 @@ static void ae_on_log(const struct ae_logger* const logger, struct ae_logger_eve
 	{
 		for (int i = 0; i < logger->console_sink_count; i++)
 		{
-			struct ae_sink* sink = &logger->console_sinks[i];
+			const struct ae_sink* sink = &logger->console_sinks[i];
 
 			if (event->level >= sink->level)
 			{
 				event->data = sink->data;
-				ae_on_log_to_console(logger, event);
+				ae_on_log_to_console(event);
 			}
 		}
 
 		for (int j = 0; j < logger->file_sink_count; j++)
 		{
-			struct ae_sink* sink = &logger->file_sinks[j];
+			const struct ae_sink* sink = &logger->file_sinks[j];
 
 			if (event->level >= sink->level)
 			{
 				event->data = sink->data;
-				ae_on_log_to_file(logger, event);
+				ae_on_log_to_file(event);
 			}
 		}
 	}
@@ -137,12 +137,12 @@ static void ae_on_log_thread_safe(const struct ae_logger* const logger, struct a
 		{
 			logger->lock_function(logger->console_sinks[i].data);
 
-			struct ae_sink* sink = &logger->console_sinks[i];
+			const struct ae_sink* sink = &logger->console_sinks[i];
 
 			if (event->level >= sink->level)
 			{
 				event->data = sink->data;
-				ae_on_log_to_console(logger, event);
+				ae_on_log_to_console(event);
 			}
 
 			logger->unlock_function(logger->console_sinks[i].data);
@@ -152,12 +152,12 @@ static void ae_on_log_thread_safe(const struct ae_logger* const logger, struct a
 		{
 			logger->lock_function(logger->file_sinks[j].data);
 
-			struct ae_sink* sink = &logger->file_sinks[j];
+			const struct ae_sink* sink = &logger->file_sinks[j];
 
 			if (event->level >= sink->level)
 			{
 				event->data = sink->data;
-				ae_on_log_to_file(logger, event);
+				ae_on_log_to_file(event);
 			}
 
 			logger->unlock_function(logger->file_sinks[j].data);
@@ -165,11 +165,11 @@ static void ae_on_log_thread_safe(const struct ae_logger* const logger, struct a
 	}
 }
 
-struct ae_logger* ae_logger_create(enum log_levels level)
+struct ae_logger* ae_logger_create(enum ae_log_levels level)
 {
-	struct ae_logger* logger = NULL;
+	struct ae_logger* logger = malloc(sizeof(*logger));
 
-	if (!(logger = malloc(sizeof(*logger))))
+	if (!logger)
 		return NULL;
 
 	logger->level = level;
@@ -182,11 +182,11 @@ struct ae_logger* ae_logger_create(enum log_levels level)
 	return logger;
 }
 
-struct ae_logger* ae_logger_create_threaded(enum log_levels level, ae_logger_lock_fn lock_fn, ae_logger_unlock_fn unlock_fn)
+struct ae_logger* ae_logger_create_threaded(enum ae_log_levels level, ae_logger_lock_fn lock_fn, ae_logger_unlock_fn unlock_fn)
 {
-	struct ae_logger* logger = NULL;
+	struct ae_logger* logger = malloc(sizeof(*logger));
 
-	if (!(logger = malloc(sizeof(*logger))))
+	if (!logger)
 		return NULL;
 
 	logger->level = level;
@@ -235,7 +235,7 @@ static struct ae_logger* ae_logger_get_main_logger()
 	return main_logger;
 }
 
-static struct ae_logger* ae_logger_get_or_create_main_logger(enum log_levels level)
+static struct ae_logger* ae_logger_get_or_create_main_logger(enum ae_log_levels level)
 {
 	if (main_logger)
 		return main_logger;
@@ -247,7 +247,7 @@ static struct ae_logger* ae_logger_get_or_create_main_logger(enum log_levels lev
 	return main_logger;
 }
 
-static void ae_logger_log(struct ae_logger* logger, enum log_levels level, const char* file, int32_t line, const char* fmt, ...)
+static void ae_logger_log(struct ae_logger* logger, enum ae_log_levels level, const char* file, int32_t line, const char* fmt, ...)
 {
 	struct ae_logger_event event = {
 	.fmt = fmt,
@@ -270,12 +270,12 @@ static void ae_logger_log(struct ae_logger* logger, enum log_levels level, const
 	va_end(event.arguments);
 }
 
-static void ae_logger_log_main(enum log_levels level, const char* file, int32_t line, const char* fmt, ...)
+static void ae_logger_log_main(enum ae_log_levels level, const char* file, int32_t line, const char* fmt, ...)
 {
 	ae_logger_log(main_logger, level, file, line, fmt);
 }
 
-static const struct ae_logging_api logging_api =
+static struct ae_logging_api logging_api =
 {
 	.get_main_logger = ae_logger_get_main_logger,
 	.get_or_create_main_logger = ae_logger_get_or_create_main_logger,
@@ -287,12 +287,14 @@ static const struct ae_logging_api logging_api =
 	.log_main = ae_logger_log_main
 };
 
-AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
+AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)
 {
+	AE_UNREFERENCED_PARAMETER(reload);
+
 	ae_set_api(registry, ae_logging_api, &logging_api);
 }
 
-AE_DLL_EXPORT plugin_unload(struct ae_api_registry_api* registry)
+AE_DLL_EXPORT void plugin_unload(struct ae_api_registry_api* registry)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
 }

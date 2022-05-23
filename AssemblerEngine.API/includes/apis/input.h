@@ -226,46 +226,53 @@ struct ae_input_event
 {
     enum ae_input_event_type type;
 
+    char* source_id;
+
     union
     {
         // keyboard key event
         struct
         {
-            ae_input_key_codes      key_code;
-            ae_input_key_states     key_state;
-            ae_input_key_modifiers  key_mod;
+            enum ae_input_key_codes     key_code;
+            enum ae_input_key_states    key_state;
+            enum ae_input_key_modifiers key_mod;
         };
 
         // keyboard text event
         struct
         {
-            uint32_t                unicode;
+            uint32_t                    unicode;
         };
 
         // mouse btn event
         struct
         {
-            ae_input_mouse_codes    button;
+            enum ae_input_mouse_codes   button;
         };
 
         // mouse pos event
         struct
         {
-            vec2                    position;
+            vec2                        position;
         };
         
         // mouse scroll event
         struct
         {
-            vec2                    scroll;
+            vec2                        scroll;
         };
 
     };
 };
 
+struct ae_keyboar_state
+{
+
+};
+
 struct ae_input_api
 {
-	void (*get_source)();
-	void (*add_source)();
+    enum ae_input_key_states get_key();
+    enum ae_input_key_modifiers get_key_mod();
 	void (*poll_events)();
 };

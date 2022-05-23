@@ -20,8 +20,8 @@ struct ae_hashmap
 	uint32_t max_chain;
 };
 
-void ae_hashmap_init(struct ae_hashmap* map);
-void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, const uint32_t size);
-void* ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const uint32_t size);
-void ae_hashmap_remove(struct ae_hashmap* map, const char* key);
-void ae_hashmap_free(struct ae_hashmap* map);
+void	ae_hashmap_init(struct ae_hashmap* map);
+void	ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, const uint32_t size);
+void*	ae_hashmap_get_or_reserve(struct ae_hashmap* map, const char* key, const uint32_t size);
+void	ae_hashmap_remove(struct ae_hashmap* map, const char* key);
+void	ae_hashmap_free(struct ae_hashmap* map);

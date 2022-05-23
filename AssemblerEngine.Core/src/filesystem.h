@@ -40,17 +40,16 @@ struct ae_filesystem_it
 	struct ae_path path;
 };
 
-void ae_path_init(struct ae_path* path, char* root);
-void ae_path_append(struct ae_path* path, struct ae_path* path_to_append);
+void						ae_path_init(struct ae_path* path, const char* root);
+void						ae_path_append(struct ae_path* path, struct ae_path* path_to_append);
 
-struct ae_filesystem_it* ae_filesystem_it_new(struct ae_path* path);
-bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path);
-void ae_filesystem_it_free(struct ae_filesystem_it* it);
-bool ae_filesystem_it_next(struct ae_filesystem_it* it);
-
-void ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path* path);
-const bool ae_filesystem_it_is_dir(struct ae_filesystem_it* it);
-void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32_t size);
-void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffer, uint32_t size);
-const char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it);
-const size_t ae_filesystem_it_get_size(struct ae_filesystem_it* it);
+struct ae_filesystem_it*	ae_filesystem_it_new(struct ae_path* path);
+bool						ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path);
+void						ae_filesystem_it_free(struct ae_filesystem_it* it);
+bool						ae_filesystem_it_next(struct ae_filesystem_it* it);
+void						ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path* path);
+bool						ae_filesystem_it_is_dir(struct ae_filesystem_it* it);
+void						ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32_t size);
+void						ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffer, uint32_t size);
+char*						ae_filesystem_it_get_extension(struct ae_filesystem_it* it);
+size_t						ae_filesystem_it_get_size(struct ae_filesystem_it* it);

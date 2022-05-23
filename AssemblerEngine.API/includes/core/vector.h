@@ -24,7 +24,7 @@ inline void vector_init(struct vector* vector, size_t data_size, uint32_t capaci
 		if (vector->data == NULL)
 		{
 			free(vector);
-			return NULL;
+			return;
 		}
 	}
 
@@ -104,14 +104,14 @@ inline uint32_t vector_assign(struct vector* vector, uint32_t index)
 #define VECTOR_DEFINE_TYPE(TYPE) VECTOR_DEFINE_NAME(TYPE, TYPE) 
 #define VECTOR_DEFINE_NAME(TYPE, NAME)																\
 struct vector_##NAME {																				\
-	int size;																						\
-	int capacity;																					\
-	size_t data_size;																				\
-	TYPE *data;																						\
+	uint32_t size;																					\
+	uint32_t capacity;																				\
+	size_t	data_size;																				\
+	TYPE *	data;																					\
 };																									\
 inline void vector_##NAME##_init(struct vector_##NAME *vector, uint32_t capacity)					\
 {																									\
-	vector_init(vector, sizeof(TYPE), capacity);													\
+	vector_init((struct vector*)vector, sizeof(TYPE), capacity);									\
 }																									\
 inline struct vector_##NAME* vector_##NAME##_create(uint32_t capacity)								\
 {																									\
@@ -131,7 +131,7 @@ inline void vector_##NAME##_push_back(struct vector_##NAME *vector, TYPE value)	
 }																									\
 inline TYPE* vector_##NAME##_emplace_back(struct vector_##NAME *vector)								\
 {																									\
-	return &vector->data[vector_push_back(vector)]; 												\
+	return &vector->data[vector_push_back((struct vector*)vector)]; 								\
 }																									\
 inline void vector_##NAME##_assign(struct vector_##NAME *vector, uint32_t index, TYPE value)		\
 {																									\

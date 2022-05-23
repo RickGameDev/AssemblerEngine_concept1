@@ -5,11 +5,13 @@
 #include <math/io.h>
 #include <math/struct.h>
 
+#include <string.h>
+
 #define AE_MAX_SHADER_STAGES 5
 
-static int32_t ubo_view_projection_matrix = 0;
+static uint32_t ubo_view_projection_matrix = 0;
 
-void ae_shader_set_view_projection(float* view_projection)
+void ae_shader_set_view_projection(const float* view_projection)
 {
 	glNamedBufferSubData(ubo_view_projection_matrix, 0, sizeof(mat4), (float*)view_projection);
 }
@@ -63,11 +65,11 @@ void ae_shader_set_current_shader(struct ae_shader* shader)
 
 struct ae_shader* ae_shader_create(
 	char* debug_output,
-	int32_t debug_output_size,
-	char** stage_sources,
-	int32_t* stage_sizes,
-	int32_t* stage_types,
-	int32_t stage_count)
+	const int32_t debug_output_size,
+	const char** stage_sources,
+	const int32_t* stage_sizes,
+	const int32_t* stage_types,
+	const int32_t stage_count)
 {
 	if (stage_count > AE_MAX_SHADER_STAGES)
 		return NULL;
@@ -140,11 +142,11 @@ struct ae_shader* ae_shader_create(
 
 struct ae_shader* ae_shader_create_basic(
 	char* debug_output,
-	int32_t debug_output_size,
-	char* vertex_shader,
-	char* fragment_shader)
+	const int32_t debug_output_size,
+	const char* vertex_shader,
+	const char* fragment_shader)
 {
-	char* stage_sources[2] = { vertex_shader, fragment_shader };
+	const char* stage_sources[2] = { vertex_shader, fragment_shader };
 	int32_t stages_types[2] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 	int32_t stage_sizes[2] = { (int32_t)strlen(vertex_shader), (int32_t)strlen(fragment_shader) };
 	return ae_shader_create(debug_output, debug_output_size, stage_sources, stage_sizes, stages_types, 2);

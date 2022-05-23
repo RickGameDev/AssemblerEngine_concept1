@@ -55,7 +55,7 @@ static void draw_batch(const struct ae_render_batch* batch)
 	glDrawElements(GL_TRIANGLES, batch->current_index_count, GL_UNSIGNED_SHORT, 0);
 }
 
-static reset_batch(struct ae_render_batch* batch)
+static void reset_batch(struct ae_render_batch* batch)
 {
 	batch->current_vertex_count = 0;
 	batch->current_index_count = 0;
@@ -90,7 +90,7 @@ static float get_free_texture_unit(struct ae_render_batch* batch, uint32_t textu
 	{
 		if (batch->textures[i] == texture_id)
 		{
-			textureUnit = i;
+			textureUnit = (float)i;
 			break;
 		}
 	}
@@ -98,7 +98,7 @@ static float get_free_texture_unit(struct ae_render_batch* batch, uint32_t textu
 	if (textureUnit == 1.0f)
 	{
 		batch->textures[batch->current_texture_count] = texture_id;
-		textureUnit = batch->current_texture_count;
+		textureUnit = (float)batch->current_texture_count;
 		batch->current_texture_count++;
 	}
 
@@ -136,13 +136,12 @@ struct ae_render_batch* ae_render_batch_create(struct ae_shader* const shader, c
 	size_t offset = 0;
 	for (size_t i = 0; i < batch->total_index_count; i += 6)
 	{
-		((uint16_t*)batch->indices)[i] = 0 + offset;
-		((uint16_t*)batch->indices)[i + 1] = 1 + offset;
-		((uint16_t*)batch->indices)[i + 2] = 2 + offset;
-
-		((uint16_t*)batch->indices)[i + 3] = 2 + offset;
-		((uint16_t*)batch->indices)[i + 4] = 3 + offset;
-		((uint16_t*)batch->indices)[i + 5] = 0 + offset;
+		((uint16_t*)batch->indices)[i] =		(uint16_t)(0 + offset);
+		((uint16_t*)batch->indices)[i + 1] =	(uint16_t)(1 + offset);
+		((uint16_t*)batch->indices)[i + 2] =	(uint16_t)(2 + offset);			 
+		((uint16_t*)batch->indices)[i + 3] =	(uint16_t)(2 + offset);
+		((uint16_t*)batch->indices)[i + 4] =	(uint16_t)(3 + offset);
+		((uint16_t*)batch->indices)[i + 5] =	(uint16_t)(0 + offset);
 
 		offset += 4;
 	}
@@ -183,7 +182,7 @@ struct ae_render_batch* ae_render_batch_create(struct ae_shader* const shader, c
 	int32_t samplers[64] = { 0 };
 	samplers[0] = texure;
 
-	for (int32_t i = 0; i < batch->total_texture_count; i++)
+	for (uint32_t i = 0; i < batch->total_texture_count; i++)
 	{
 		samplers[i] = i;
 		batch->textures[i] = 0;
@@ -213,7 +212,7 @@ void ae_render_scene_start(const struct ae_camera* camera)
 {
 	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	ae_shader_set_view_projection(camera->view_projection);
+	ae_shader_set_view_projection(&camera->view_projection[0][0]);
 }
 
 void ae_render_batch_start(const struct ae_render_batch* batch)
@@ -228,7 +227,7 @@ void ae_render_batch_end(struct ae_render_batch* batch)
 	reset_batch(batch);
 }
 
-void ae_render_batch_draw(struct ae_render_batch* batch, const struct ae_draw_params* const params)
+void ae_render_batch_draw(struct ae_render_batch* batch, struct ae_draw_params* const params)
 {
 	test_batch(batch);
 
@@ -275,7 +274,7 @@ void ae_render_batch_draw(struct ae_render_batch* batch, const struct ae_draw_pa
 	batch->current_index_count += 6;
 }
 
-void ae_render_batch_draw_textured(struct ae_render_batch* batch, const struct ae_textured_draw_params* const params)
+void ae_render_batch_draw_textured(struct ae_render_batch* batch, struct ae_textured_draw_params* const params)
 {
 	test_batch_with_textures(batch);
 

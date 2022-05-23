@@ -41,6 +41,6 @@ struct ae_window_api
 	void						(*destroy)(struct ae_window* window);
 	struct ae_window*			(*create_child)(struct ae_window* parent, struct ae_create_window_params* params);
 	bool						(*update)(struct ae_window* window);
-	void						(*show)(struct ae_window* window);
+	void						(*show)(struct ae_window* window, const bool show);
 	struct ae_native_window*	(*get_native_window)(struct ae_window* window);
 };

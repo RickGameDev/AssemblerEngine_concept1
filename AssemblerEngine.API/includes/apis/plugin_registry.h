@@ -13,7 +13,7 @@ struct ae_plugin_registry_api
 {
 	struct ae_plugin_registry*	registry;
 
-	uint32_t	(*load)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, const char* path);
-	void		(*unload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
-	void		(*reload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
+	void (*load)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, const char* path);
+	void (*unload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
+	void (*reload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
 };

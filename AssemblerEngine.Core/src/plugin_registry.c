@@ -1,6 +1,7 @@
 #include "AssemblerEngine/plugin_registry.h"
 #include "AssemblerEngine/api_registry.h"
 #include <apis/plugin_registry.h>
+#include <core/core.h>
 #include "filesystem.h"
 #include "hashmap.h"
 
@@ -58,41 +59,13 @@ struct ae_plugin_registry
 	struct ae_hashmap plugins;
 };
 
-static void ae_plugin_load(struct ae_plugin_registry* registry, struct ae_api_registry* api_registry, const char* dir, const char* name)
-{
-	LIBRARY_TYPE library = NULL;
-
-	library = LOAD_LIBRARY(dir);
-
-	if (library)
-	{
-		ae_plugin_load_fn load_fn = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
-		ae_plugin_unload_fn unload_fn = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
-
-		if (!load_fn || !unload_fn)
-		{
-			UNLOAD_LIBRARY(library);
-			return 0;
-		}
-
-		struct ae_plugin plugin = {
-			.path = dir,
-			.library = library,
-			.load = load_fn,
-			.unload = unload_fn
-		};
-
-		ae_hashmap_insert(&registry->plugins, name, &plugin, sizeof(plugin));
-
-		plugin.load(api_registry, false);
-	}
-}
+static void ae_plugin_load(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, const char* dir, const char* name);
 
 struct ae_plugin_registry* ae_plugin_registry_new()
 {
-	struct ae_plugin_registry* self = NULL;
+	struct ae_plugin_registry* self = malloc(sizeof(*self));
 
-	if (!(self = malloc(sizeof(*self))))
+	if (!self)
 	{
 		return NULL;
 	}
@@ -142,10 +115,45 @@ void ae_plugin_registry_load(struct ae_plugin_registry* registry, struct ae_api_
 
 void ae_plugin_registry_unload(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t index)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
+	AE_UNREFERENCED_PARAMETER(api_registry);
+	AE_UNREFERENCED_PARAMETER(index);
 }
 
 void ae_plugin_registry_reload(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t index)
 {
+	AE_UNREFERENCED_PARAMETER(registry);
+	AE_UNREFERENCED_PARAMETER(api_registry);
+	AE_UNREFERENCED_PARAMETER(index);
+}
 
+static void ae_plugin_load(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, const char* dir, const char* name)
+{
+	LIBRARY_TYPE library = NULL;
+
+	library = LOAD_LIBRARY(dir);
+
+	if (library)
+	{
+		ae_plugin_load_fn load_fn = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
+		ae_plugin_unload_fn unload_fn = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
+
+		if (!load_fn || !unload_fn)
+		{
+			UNLOAD_LIBRARY(library);
+			return;
+		}
+
+		struct ae_plugin plugin = {
+			.library = library,
+			.load = load_fn,
+			.unload = unload_fn
+		};
+
+		memcpy_s(plugin.path, AE_PATH_MAX_LENGTH, dir, strlen(dir) + 1);
+
+		ae_hashmap_insert(&registry->plugins, name, &plugin, sizeof(plugin));
+
+		plugin.load(api_registry, false);
+	}
 }

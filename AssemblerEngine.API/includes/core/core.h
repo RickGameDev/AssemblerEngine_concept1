@@ -1,3 +1,5 @@
+#pragma once
+
 #if defined(_MSC_VER)
 //  Microsoft 
 #define AE_DLL_EXPORT __declspec(dllexport)
@@ -11,3 +13,5 @@ define AE_INLINE static inline __attribute((always_inline))
 #define AE_DLL_EXPORT
 #pragma warning Unknown dynamic link import/export semantics.
 #endif
+
+#define AE_UNREFERENCED_PARAMETER(x) (void)x

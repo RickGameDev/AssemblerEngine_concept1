@@ -18,9 +18,9 @@ static struct ae_camera* ae_camera_create_orthograpic(
 	const float near,
 	const float far)
 {
-	struct ae_camera* camera = NULL;
+	struct ae_camera* camera = malloc(sizeof(*camera));
 	
-	if (!(camera = malloc(sizeof(*camera))))
+	if (!camera)
 		return NULL;
 
 	ae_mat4_identity(camera->view);
@@ -48,12 +48,14 @@ static const struct ae_camera_api camera_api =
 	.get_view_projection = ae_camera_get_view_projection
 };
 
-AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
+AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)
 {
+	AE_UNREFERENCED_PARAMETER(reload);
+
 	ae_set_api(registry, ae_camera_api, &camera_api);
 }
 
-AE_DLL_EXPORT plugin_unload(struct ae_api_registry_api* registry)
+AE_DLL_EXPORT void plugin_unload(struct ae_api_registry_api* registry)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
 }

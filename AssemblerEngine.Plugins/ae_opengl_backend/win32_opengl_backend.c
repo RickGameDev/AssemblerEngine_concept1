@@ -16,7 +16,6 @@
 #include <assert.h>
 
 
-
 typedef void* opengl_fn;
 
 struct ae_opengl_backend
@@ -40,7 +39,9 @@ static struct ae_window_api*	 ae_window_api = NULL;
 
 void opengl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
-	const char* src_str;
+	AE_UNREFERENCED_PARAMETER(length);
+	AE_UNREFERENCED_PARAMETER(user_param);
+	const char* src_str = "";
 	switch (source)
 	{
 	case GL_DEBUG_SOURCE_API:
@@ -63,7 +64,7 @@ void opengl_message_callback(GLenum source, GLenum type, GLuint id, GLenum sever
 		break;
 	}
 
-	const char* type_str;
+	const char* type_str = "";
 	switch (type)
 	{
 	case GL_DEBUG_TYPE_ERROR:
@@ -89,7 +90,7 @@ void opengl_message_callback(GLenum source, GLenum type, GLuint id, GLenum sever
 		break;
 	}
 
-	const char* severity_str;
+	const char* severity_str = "";
 	switch (severity)
 	{
 	case GL_DEBUG_SEVERITY_NOTIFICATION:
@@ -138,14 +139,16 @@ static void ae_opengl_backend_set_debug_callback(ae_renderer_opengl_debug_callba
 	glDebugMessageCallback(callback, NULL);
 }
 
-static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
+static struct ae_opengl_backend* opengl_get_or_create()
 {
 	assert(ae_window_api);
 
 	if (render_backend)
 		return render_backend;
 
-	struct ae_native_window* native_window = ae_window_api->get_native_window(window);
+	//HWND windo = GetTopWindow(NULL);
+	//HDC dc = GetDC(windo);
+	//struct ae_native_window* native_window = ae_window_api->get_native_window(window);
 
 	// create dummy window
 	HINSTANCE dummy_instance = NULL;
@@ -164,7 +167,7 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 	dummy_class.hCursor = LoadCursor(NULL, IDC_CROSS);
 	dummy_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	dummy_class.lpszClassName = TEXT("dummy");
-	dummy_class.cbWndExtra = sizeof(window);
+	dummy_class.cbWndExtra = 0;
 
 	RegisterClassEx(&dummy_class);
 
@@ -199,9 +202,8 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 
 	opengl_instance = LoadLibrary(TEXT("opengl32.dll"));
 
-	PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = opengl_backend_get_opengl_proc_address("wglGetExtensionsStringARB");
-	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = opengl_backend_get_opengl_proc_address("wglChoosePixelFormatARB");
-	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = opengl_backend_get_opengl_proc_address("wglCreateContextAttribsARB");
+	PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)opengl_backend_get_opengl_proc_address("wglChoosePixelFormatARB");
+	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)opengl_backend_get_opengl_proc_address("wglCreateContextAttribsARB");
 
 	const int pixelAttribs[] = {
 		WGL_DRAW_TO_WINDOW_ARB, 1,
@@ -217,7 +219,9 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 		0
 	};
 
-	if (!(render_backend = malloc(sizeof(*render_backend))))
+	render_backend = malloc(sizeof(*render_backend));
+
+	if (!render_backend)
 		return NULL;
 
 	memset(&render_backend->pixel_format_desc, 0, sizeof(render_backend->pixel_format_desc));
@@ -231,8 +235,11 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 	ReleaseDC(dummy_window, dummy_device_context);
 	DestroyWindow(dummy_window);
 
-	DescribePixelFormat(native_window->device, render_backend->pixel_format_id, sizeof(render_backend->pixel_format_desc), &render_backend->pixel_format_desc);
-	SetPixelFormat(native_window->device, render_backend->pixel_format_id, &render_backend->pixel_format_desc);
+	HWND windowa = GetTopWindow(NULL);
+	HDC device = GetDC(windowa);
+
+	DescribePixelFormat(device, render_backend->pixel_format_id, sizeof(render_backend->pixel_format_desc), &render_backend->pixel_format_desc);
+	SetPixelFormat(device, render_backend->pixel_format_id, &render_backend->pixel_format_desc);
 
 	const int major_min = 4, minor_min = 6;
 	int  contextAttribs[] = {
@@ -242,8 +249,8 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 		0
 	};
 
-	render_backend->render_context = wglCreateContextAttribsARB(native_window->device, 0, contextAttribs);
-	wglMakeCurrent(native_window->device, render_backend->render_context);
+	render_backend->render_context = wglCreateContextAttribsARB(device, 0, contextAttribs);
+	wglMakeCurrent(device, render_backend->render_context);
 
 	gladLoadGLLoader(opengl_backend_get_opengl_proc_address);
 
@@ -254,7 +261,7 @@ static struct ae_opengl_backend* opengl_get_or_create(struct ae_window* window)
 
 static void opengl_backend_destroy(struct ae_opengl_backend* backend)
 {
-
+	AE_UNREFERENCED_PARAMETER(backend);
 }
 
 static void opengl_backend_set_window(struct ae_opengl_backend* backend, struct ae_window* window)
@@ -272,7 +279,7 @@ static void opengl_backend_set_window(struct ae_opengl_backend* backend, struct 
 		DWORD error = GetLastError();
 		LPSTR message = NULL;
 
-		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
 
 		printf(message);
@@ -280,7 +287,7 @@ static void opengl_backend_set_window(struct ae_opengl_backend* backend, struct 
 		LocalFree(message);
 	}
 	
-	glViewport(0, 0, window->size[0], window->size[1]);
+	glViewport(0, 0, (int)window->size[0], (int)window->size[1]);
 }
 
 static struct ae_opengl_backend* ae_opengl_backend_get()
@@ -313,8 +320,10 @@ static const struct ae_renderer_api render_api =
 	.render_batch_draw_textured = ae_render_batch_draw_textured
 };
 
-AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
+AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)
 {
+	AE_UNREFERENCED_PARAMETER(reload);
+
 	ae_window_api = ae_get_api(registry, ae_window_api);
 
 	ae_set_api(registry, ae_opengl_backend_api, &opengl_backend_api);
@@ -322,7 +331,7 @@ AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
 	ae_set_api(registry, ae_shader_api, &shader_api);
 }
 
-AE_DLL_EXPORT plugin_unload(struct ae_api_registry_api* registry)
+AE_DLL_EXPORT void plugin_unload(struct ae_api_registry_api* registry)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
 }

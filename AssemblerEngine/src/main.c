@@ -1,6 +1,5 @@
 #include <AssemblerEngine/api_registry.h>
 #include <AssemblerEngine/plugin_registry.h>
-#include <AssemblerEngine/system_info.h>
 
 #include <core/vector.h>
 
@@ -10,7 +9,6 @@
 #include <apis/logging.h>
 #include <apis/plugin_registry.h>
 #include <apis/renderer.h>
-#include <apis/system_info.h>
 #include <apis/shader.h>
 #include <apis/window.h>
 #include <apis/opengl_backend.h>
@@ -72,28 +70,20 @@ void main()\n\
 	o_color = texture(u_textures[index], v_textureCoordinate) * v_color;\n\
 };";
 
-const char debug[255];
+char debug[255];
 
 int main()
 {
-	// create required apis for api_register
-	struct ae_system_info_api* system_info_api = &(struct ae_system_info_api)
-	{
-		.system_info = ae_system_info_init(),
-			.get_page_size = ae_system_info_get_page_size
-	};
-
 	// create api register
 	struct ae_api_registry_api* api_registry_api = &(struct ae_api_registry_api)
 	{
 		.registry = ae_api_registry_new(),
-			.get_api = ae_api_registry_get_api,
-			.set_api = ae_api_registry_set_api,
-			.remove_api = ae_api_registry_remove_api
+		.get_api = ae_api_registry_get_api,
+		.set_api = ae_api_registry_set_api,
+		.remove_api = ae_api_registry_remove_api
 	};
 
 	ae_set_api(api_registry_api, ae_api_registry_api, api_registry_api);
-	ae_set_api(api_registry_api, ae_system_info_api, system_info_api);
 
 	// register core plugins
 	struct ae_plugin_registry_api* plugin_registry_api = ae_get_api(api_registry_api, ae_plugin_registry_api);
@@ -109,21 +99,21 @@ int main()
 	struct ae_logging_api* ae_logging_api = ae_get_api(api_registry_api, ae_logging_api);
 	struct ae_window_api* ae_window_api = ae_get_api(api_registry_api, ae_window_api);
 	struct ae_opengl_backend_api* ae_render_backend_api = ae_get_api(api_registry_api, ae_opengl_backend_api);
-	struct ae_renderer_api* ae_renderer_api = ae_get_api(api_registry_api, ae_renderer_api);
-	struct ae_shader_api* ae_shader_api = ae_get_api(api_registry_api, ae_shader_api);
-	struct ae_camera_api* ae_camera_api = ae_get_api(api_registry_api, ae_camera_api);
+	//struct ae_renderer_api* ae_renderer_api = ae_get_api(api_registry_api, ae_renderer_api);
+	//struct ae_shader_api* ae_shader_api = ae_get_api(api_registry_api, ae_shader_api);
+	//struct ae_camera_api* ae_camera_api = ae_get_api(api_registry_api, ae_camera_api);
 	struct ae_imgui_api* ae_imgui_api = ae_get_api(api_registry_api, ae_imgui_api);
 
-	// initialize apis
-	struct ae_logger* logger = ae_logging_api->get_or_create_main_logger(LEVEL_INFO);
+	//// initialize apis
+	ae_logging_api->get_or_create_main_logger(LEVEL_INFO);
 	struct ae_window* window = ae_window_api->get_or_create(&main_window_params);
-	struct ae_opengl_backend* opengl = ae_render_backend_api->get_or_create(window);
-	struct ae_camera* camera = ae_camera_api->create_orthographic((vec3)
-	{
-		0, 0, 0
-	}, 1280.0f / 720.0f, 0.0f, 1000.0f, 0.0f, 1000.0f, 0.0f, 1.0f);
-	struct ae_shader* shader = ae_shader_api->create_basic(debug, 255, default_vertex, default_fragment);
-	struct ae_render_batch* batch = ae_renderer_api->render_batch_create(shader, 1024);
+	ae_render_backend_api->get_or_create(window);
+	//struct ae_camera* camera = ae_camera_api->create_orthographic((vec3)
+	//{
+	//	0, 0, 0
+	//}, 1280.0f / 720.0f, 0.0f, 1000.0f, 0.0f, 1000.0f, 0.0f, 1.0f);
+	//struct ae_shader* shader = ae_shader_api->create_basic(debug, 255, default_vertex, default_fragment);
+	//struct ae_render_batch* batch = ae_renderer_api->render_batch_create(shader, 1024);
 
 	ae_log_info("Starting AssemblerEngine...");
 

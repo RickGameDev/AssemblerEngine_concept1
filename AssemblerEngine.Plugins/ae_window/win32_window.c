@@ -6,8 +6,6 @@
 #include <core/types.h>
 
 #include <windows.h>
-#include <uxtheme.h>
-#include <vssym32.h>
 
 struct ae_native_window
 {
@@ -22,8 +20,6 @@ static bool close = true;
 
 static LRESULT CALLBACK main_window_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	LRESULT res = 0;
-
 	switch (msg)
 	{
 	case WM_DESTROY:
@@ -35,8 +31,6 @@ static LRESULT CALLBACK main_window_callback(HWND window, UINT msg, WPARAM wpara
 
 static LRESULT CALLBACK child_window_callback(HWND window, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	LRESULT res = 0;
-
 	switch (msg)
 	{
 	case WM_CLOSE:
@@ -79,16 +73,20 @@ static DWORD ae_window_get_style_ex(const enum ae_window_flags flags)
 
 	if (flags & AE_WINDOW_HOVERED)
 		style |= WS_EX_TOPMOST;
+
+	return style;
 }
 
 static struct ae_window* ae_window_create(struct ae_window* parent, struct ae_create_window_params* params)
 {
-	struct ae_window* window = NULL;
+	struct ae_window* window = malloc(sizeof(*window));
 
-	if (!(window = malloc(sizeof(*window))))
+	if (!window)
 		return NULL;
 
-	if (!(window->native_handle = malloc(sizeof(*window->native_handle))))
+	window->native_handle = malloc(sizeof(*window->native_handle));
+
+	if (!window->native_handle)
 	{
 		free(window);
 		return NULL;
@@ -132,10 +130,10 @@ static struct ae_window* ae_window_create(struct ae_window* parent, struct ae_cr
 		0);
 
 	window->native_handle->device = GetDC(window->native_handle->handle);
-	window->size[0] = params->width;
-	window->size[1] = params->height;
-	window->position[0] = params->position_x;
-	window->position[1] = params->position_y;
+	window->size[0] = (float)params->width;
+	window->size[1] = (float)params->height;
+	window->position[0] = (float)params->position_x;
+	window->position[1] = (float)params->position_y;
 	window->flags = params->flags;
 
 	if (params->flags & AE_WINDOW_VISIBLE)
@@ -162,7 +160,7 @@ static struct ae_window* ae_window_get_or_create_main_window(struct ae_create_wi
 	return main_window;
 }
 
-static void ae_window_show(struct ae_window* window, bool show)
+static void ae_window_show(struct ae_window* window, const bool show)
 {
 	if (show)
 		ShowWindow(window->native_handle->handle, SW_SHOW);
@@ -183,12 +181,11 @@ static bool ae_window_update(struct ae_window* window)
 	MSG msg;
 	while (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE))
 	{
-		if (msg.message == WM_QUIT)
+		switch (msg.message)
 		{
-			return false;
-		}
-		else
-		{
+		case WM_INPUT:
+			return true;
+		default:
 			TranslateMessage(&msg);
 			DispatchMessageA(&msg);
 		}
@@ -218,12 +215,13 @@ static const struct ae_window_api window_api =
 	.get_native_window = ae_window_get_native_window
 };
 
-AE_DLL_EXPORT plugin_load(struct ae_api_registry_api* registry, bool reload)
+AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)
 {
+	AE_UNREFERENCED_PARAMETER(reload);
 	ae_set_api(registry, ae_window_api, &window_api);
 }
 
-AE_DLL_EXPORT plugin_unload(struct ae_api_registry_api* registry)
+AE_DLL_EXPORT void plugin_unload(struct ae_api_registry_api* registry)
 {
-
+	AE_UNREFERENCED_PARAMETER(registry);
 }

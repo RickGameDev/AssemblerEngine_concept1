@@ -32,6 +32,7 @@
 #  elif defined(_MSC_VER) && (_MSC_VER >= 1900) /*  Visual Studio 2015 */
      /* We can support anonymous structs
       * since Visual Studio 2015 or 2017 (1910) maybe? */
+#    pragma warning( disable : 4201 )
 #    define AE_USE_ANONYMOUS_STRUCT 1
 #  else
      /* Otherwise, we're presumably building for C99 or C89 and can't rely

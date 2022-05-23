@@ -5,10 +5,10 @@
 #include <string.h>
 #include <stdint.h>
 
-void ae_path_init(struct ae_path* path, char* root)
+void ae_path_init(struct ae_path* path, const char* root)
 {
 	memset(path->path, '\0', AE_PATH_MAX_LENGTH);
-	size_t length = strlen(root);
+	uint32_t length = (uint32_t)strlen(root);
 
 	if (length >= AE_PATH_MAX_LENGTH)
 		return;
@@ -82,7 +82,7 @@ bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path)
 	{
 		char tmp_path[AE_PATH_MAX_LENGTH] = { 0 };
 		memcpy(tmp_path, path->path, path->length);
-		strcat(tmp_path, "\\*");
+		strcat_s(tmp_path, AE_PATH_MAX_LENGTH, "\\*");
 
 #ifdef _WIN32
 		it->handle = FindFirstFile(tmp_path, &it->data);
@@ -117,8 +117,7 @@ bool ae_filesystem_it_next(struct ae_filesystem_it* it)
 
 void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32_t size)
 {
-	if (it == NULL)
-		return NULL;
+	assert(it);
 
 #ifdef WIN32
 	char* ext = strrchr(it->data.cFileName, '.');
@@ -138,9 +137,7 @@ void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32
 
 void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffer, uint32_t size)
 {
-	if (it == NULL)
-		return NULL;
-
+	assert(it);
 #ifdef WIN32
 	size_t str_size = strlen(it->data.cFileName);
 
@@ -154,8 +151,7 @@ void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffe
 
 void ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path* path)
 {
-	if (it == NULL)
-		return NULL;
+	assert(it);
 
 	ae_path_init(path, it->path.path);
 
@@ -168,29 +164,26 @@ void ae_filesystem_it_get_full_path(struct ae_filesystem_it* it, struct ae_path*
 }
 
 
-const bool ae_filesystem_it_is_dir(struct ae_filesystem_it* it)
+bool ae_filesystem_it_is_dir(struct ae_filesystem_it* it)
 {
-	if (it == NULL)
-		return NULL;
+	assert(it);
 
 #ifdef _WIN32
 	return it->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
 #endif // WIN32
 }
-const char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it)
+char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it)
 {
-	if (it == NULL)
-		return NULL;
+	assert(it);
 
 #ifdef _WIN32
 	return (strrchr(it->data.cFileName, '.')) + 1;
 #endif // WIN32
 }
 
-const size_t ae_filesystem_it_get_size(struct ae_filesystem_it* it)
+size_t ae_filesystem_it_get_size(struct ae_filesystem_it* it)
 {
-	if (it == NULL)
-		return NULL;
+	assert(it);
 
 #ifdef _WIN32
 	LARGE_INTEGER file_size = { 0 };

@@ -122,7 +122,7 @@ ae_mat3_print(mat3              matrix,
         cwi = sprintf(buff, "% .*f", AE_PRINT_PRECISION, matrix[i][j]);
       else
         cwi = sprintf(buff, "% g", matrix[i][j]);
-      cw[i] = GLM_MAX(cw[i], cwi);
+      cw[i] = AE_MAX(cw[i], cwi);
     }
   }
 
@@ -164,7 +164,7 @@ ae_mat2_print(mat2              matrix,
         cwi = sprintf(buff, "% .*f", AE_PRINT_PRECISION, matrix[i][j]);
       else
         cwi = sprintf(buff, "% g", matrix[i][j]);
-      cw[i] = GLM_MAX(cw[i], cwi);
+      cw[i] = AE_MAX(cw[i], cwi);
     }
   }
 

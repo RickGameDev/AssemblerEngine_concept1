@@ -1,5 +1,3 @@
-struct ae_allocator_api* allocator_api;
-
 #include "AssemblerEngine/api_registry.h"
 #include "hashmap.h"
 
@@ -28,21 +26,21 @@ void ae_api_registry_set_api(struct ae_api_registry* registry, const char* type,
 	ae_hashmap_insert(&registry->apis, type, api, size);
 }
 
-void* ae_api_registry_get_api(struct ae_api_registry* registry, const char* type, uint32_t size)
+void* ae_api_registry_get_api(struct ae_api_registry* registry, const char* type, const uint32_t size)
 {
 	return ae_hashmap_get_or_reserve(&registry->apis, type, size);
 }
 
-void* ae_api_registry_remove_api(struct ae_api_registry* registry, const char* type)
+void ae_api_registry_remove_api(struct ae_api_registry* registry, const char* type)
 {
-	ae_hashmap_remove(&registry->apis, type);
+	 ae_hashmap_remove(&registry->apis, type);
 }
 
-struct ae_api_registry* ae_api_registry_new(const struct ae_allocator_api* const allocator)
+struct ae_api_registry* ae_api_registry_new()
 {
-	struct ae_api_registry* self = NULL;
+	struct ae_api_registry* self = malloc(sizeof(*self));
 
-	if (!(self = malloc(sizeof(*self))))
+	if (!self)
 	{
 		return NULL;
 	}
