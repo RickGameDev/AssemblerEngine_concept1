@@ -13,6 +13,7 @@
 #elif defined __linux
 #include <linux/limits.h>
 #include <dlfcn.h>
+typedef void* __attribute__((__may_alias__)) pvoid_may_alias_t;
 #endif
 
 #ifdef _WIN32
@@ -30,7 +31,7 @@
 #if defined _WIN32
 #define UNLOAD_LIBRARY FreeLibrary
 #elif defined __linux
-#define UNLOAD_LIBRARY_FUNCTION dlclose
+#define UNLOAD_LIBRARY dlclose
 #endif
 
 #if defined _WIN32
@@ -135,22 +136,23 @@ static void ae_plugin_load(struct ae_plugin_registry* registry, struct ae_api_re
 
 	if (library)
 	{
-		ae_plugin_load_fn load_fn = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
-		ae_plugin_unload_fn unload_fn = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
+		struct ae_plugin plugin = {
+			.library = library
+		};
 
-		if (!load_fn || !unload_fn)
+
+		plugin.load = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
+		plugin.unload = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
+
+		if (!plugin.load || !plugin.unload)
 		{
 			UNLOAD_LIBRARY(library);
 			return;
 		}
 
-		struct ae_plugin plugin = {
-			.library = library,
-			.load = load_fn,
-			.unload = unload_fn
-		};
 
-		memcpy_s(plugin.path, AE_PATH_MAX_LENGTH, dir, strlen(dir) + 1);
+
+		memcpy(plugin.path, dir, strlen(dir) + 1);
 
 		ae_hashmap_insert(&registry->plugins, name, &plugin, sizeof(plugin));
 

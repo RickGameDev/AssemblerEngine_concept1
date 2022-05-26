@@ -23,8 +23,8 @@ struct ae_logger_event
 	const char* file;
 	void* data;
 	struct tm time;
-	int32_t level;
-	int32_t line;
+	enum ae_log_levels level;
+	uint32_t line;
 };
 
 typedef void (*ae_logger_log_fn)(const struct ae_logger* const logger, struct ae_logger_event* event);

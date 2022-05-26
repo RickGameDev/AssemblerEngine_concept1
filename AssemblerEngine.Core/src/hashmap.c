@@ -37,7 +37,7 @@ void ae_hashmap_init(struct ae_hashmap* map)
 	map->max_chain = 0;
 }
 
-void ae_hashmap_insert(struct ae_hashmap* map, const char* key, void* value, const uint32_t size)
+void ae_hashmap_insert(struct ae_hashmap* map, const char* key, const void* value, const uint32_t size)
 {
 	uint32_t key_length = (uint32_t)strlen(key);
 	uint32_t hash = ae_hash_string(key, key_length);
@@ -199,6 +199,9 @@ static bool make_executable(void* ptr, size_t size)
 	long unsigned int out_protect;
 	if (!VirtualProtect(ptr, size, PAGE_EXECUTE_READWRITE, &out_protect))
 		return false;
+#else
+	AE_UNREFERENCED_PARAMETER(ptr);
+	AE_UNREFERENCED_PARAMETER(size);
 #endif
 	return true;
 }

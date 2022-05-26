@@ -51,31 +51,6 @@ struct ae_api_registry_api
 	* @param [in] size The size of the registry api type to get
 	*/
 	ae_interface*	(*get_api)(struct ae_api_registry* registry, const char* type, uint32_t size);
-
-	/**
-	 * @todo to be implemented
-	 */
-	uint32_t		(*get_api_count)(struct ae_api_registry* registry, const char* type);
-
-	/**
-	 * @todo to be implemented
-	 */
-	void*			(*add_object)(struct ae_api_registry* registry, const char* type, const void* object, uint32_t size);
-
-	/**
-	 * @todo to be implemented
-	 */
-	void*			(*remove_object)(struct ae_api_registry* registry, const char* type);
-
-	/**
-	 * @todo to be implemented
-	 */
-	void*			(*get_object)(struct ae_api_registry* registry, const char* type);
-
-	/**
-	 * @todo to be implemented
-	 */
-	uint32_t		(*get_object_count)(struct ae_api_registry* registry, const char* type);
 };
 
 /** convenience macro to get an api */

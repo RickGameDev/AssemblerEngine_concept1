@@ -24,8 +24,6 @@
 #include <string.h>
 #include "glad/glad.h"
 
-static void* get_proc(const char *namez);
-
 #if defined(_WIN32) || defined(__CYGWIN__)
 #ifndef _WINDOWS_
 #undef APIENTRY
@@ -54,51 +52,11 @@ static PFNWGLGETPROCADDRESSPROC_PRIVATE gladGetProcAddressPtr;
 #endif
 #else
 #include <dlfcn.h>
-static void* libGL;
 
 #if !defined(__APPLE__) && !defined(__HAIKU__)
 typedef void* (APIENTRYP PFNGLXGETPROCADDRESSPROC_PRIVATE)(const char*);
-static PFNGLXGETPROCADDRESSPROC_PRIVATE gladGetProcAddressPtr;
 #endif
 
-static
-int open_gl(void) {
-#ifdef __APPLE__
-    static const char *NAMES[] = {
-        "../Frameworks/OpenGL.framework/OpenGL",
-        "/Library/Frameworks/OpenGL.framework/OpenGL",
-        "/System/Library/Frameworks/OpenGL.framework/OpenGL",
-        "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL"
-    };
-#else
-    static const char *NAMES[] = {"libGL.so.1", "libGL.so"};
-#endif
-
-    unsigned int index = 0;
-    for(index = 0; index < (sizeof(NAMES) / sizeof(NAMES[0])); index++) {
-        libGL = dlopen(NAMES[index], RTLD_NOW | RTLD_GLOBAL);
-
-        if(libGL != NULL) {
-#if defined(__APPLE__) || defined(__HAIKU__)
-            return 1;
-#else
-            gladGetProcAddressPtr = (PFNGLXGETPROCADDRESSPROC_PRIVATE)dlsym(libGL,
-                "glXGetProcAddressARB");
-            return gladGetProcAddressPtr != NULL;
-#endif
-        }
-    }
-
-    return 0;
-}
-
-static
-void close_gl(void) {
-    if(libGL != NULL) {
-        dlclose(libGL);
-        libGL = NULL;
-    }
-}
 #endif
 
 struct gladGLversionStruct GLVersion = { 0, 0 };

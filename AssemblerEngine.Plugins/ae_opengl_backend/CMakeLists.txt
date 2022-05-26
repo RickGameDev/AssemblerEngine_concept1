@@ -16,4 +16,4 @@ endif (WIN32)
 
 target_link_libraries(ae_opengl_backend PRIVATE AssemblerEngine.API)
 find_package(OpenGL REQUIRED)
-target_link_libraries(ae_opengl_backend PUBLIC opengl32)
+target_link_libraries(ae_opengl_backend PUBLIC ${OPENGL_LIBRARIES})

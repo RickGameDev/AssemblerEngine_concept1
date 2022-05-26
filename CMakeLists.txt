@@ -7,6 +7,8 @@ project (AssemblerEngine
 	HOMEPAGE_URL "https://github.com/RickGameDev/AssemblerEngine"
 )
 
+set (CMAKE_C_STANDARD 11)
+
 #option(BUILD_DOC "Build documentation" ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
@@ -16,6 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
 if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/W4 /WX)
+	add_definitions("-D_Float128=__float128")
 else()
     # lots of warnings and all warnings as errors
     add_compile_options(-Wall -Wextra -pedantic -Werror)

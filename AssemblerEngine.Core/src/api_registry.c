@@ -21,7 +21,7 @@ void ae_api_registry_free(struct ae_api_registry* registry)
 	}
 }
 
-void ae_api_registry_set_api(struct ae_api_registry* registry, const char* type, void* api, const uint32_t size)
+void ae_api_registry_set_api(struct ae_api_registry* registry, const char* type, const ae_interface* api, const uint32_t size)
 {
 	ae_hashmap_insert(&registry->apis, type, api, size);
 }

@@ -1,5 +1,7 @@
 #include "filesystem.h"
 
+#include <core/core.h>
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,6 +84,11 @@ bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path)
 	{
 		char tmp_path[AE_PATH_MAX_LENGTH] = { 0 };
 		memcpy(tmp_path, path->path, path->length);
+
+#ifdef MSVC
+
+#endif // MSVC
+
 		strcat_s(tmp_path, AE_PATH_MAX_LENGTH, "\\*");
 
 #ifdef _WIN32
@@ -90,7 +97,9 @@ bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path)
 	}
 	else
 	{
+#ifdef _WIN32
 		it->handle = FindFirstFile(path->path, &it->data);
+#endif
 	}
 #ifdef _WIN32
 	if (it->handle == INVALID_HANDLE_VALUE)
@@ -104,6 +113,7 @@ bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path)
 
 bool ae_filesystem_it_next(struct ae_filesystem_it* it)
 {
+#ifdef _WIN32
 	if (it == NULL || it->handle == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -111,6 +121,9 @@ bool ae_filesystem_it_next(struct ae_filesystem_it* it)
 	{
 		return true;
 	}
+#else
+	AE_UNREFERENCED_PARAMETER(it);
+#endif
 
 	return false;
 }
@@ -132,6 +145,9 @@ void ae_filesystem_it_get_name(struct ae_filesystem_it* it, char* buffer, uint32
 
 	memcpy(buffer, it->data.cFileName, str_size);
 	buffer[str_size] = '\0';
+#else
+	AE_UNREFERENCED_PARAMETER(buffer);
+	AE_UNREFERENCED_PARAMETER(size);
 #endif // WIN32
 }
 
@@ -146,6 +162,9 @@ void ae_filesystem_it_get_name_with_ext(struct ae_filesystem_it* it, char* buffe
 
 	memcpy(buffer, it->data.cFileName, str_size);
 	buffer[str_size] = '\0';
+#else
+	AE_UNREFERENCED_PARAMETER(buffer);
+	AE_UNREFERENCED_PARAMETER(size);
 #endif // WIN32
 }
 
@@ -170,7 +189,10 @@ bool ae_filesystem_it_is_dir(struct ae_filesystem_it* it)
 
 #ifdef _WIN32
 	return it->data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
+#else
+	return false;
 #endif // WIN32
+
 }
 char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it)
 {
@@ -178,6 +200,8 @@ char* ae_filesystem_it_get_extension(struct ae_filesystem_it* it)
 
 #ifdef _WIN32
 	return (strrchr(it->data.cFileName, '.')) + 1;
+#else
+	return "";
 #endif // WIN32
 }
 
@@ -191,5 +215,8 @@ size_t ae_filesystem_it_get_size(struct ae_filesystem_it* it)
 	file_size.HighPart = it->data.nFileSizeHigh;
 
 	return (size_t)file_size.QuadPart;
+#else
+	return 0;
 #endif // WIN32
+
 }
