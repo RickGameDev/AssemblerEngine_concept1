@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   opengl_backend.h
+ * @ingroup group_api
+ * @brief  OpenGL Backend API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 struct ae_opengl_backend;
@@ -14,3 +28,5 @@ struct ae_opengl_backend_api
 	void						(*set_window)(struct ae_opengl_backend* backend, struct ae_window* window);
 	void						(*set_debug_callback)(ae_renderer_opengl_debug_callback_fn callback);
 };
+
+/**@}*/

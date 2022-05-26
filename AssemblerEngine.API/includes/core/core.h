@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   core.h
+ * @ingroup group_api
+ * @brief  Important macros needed for plugins
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #if defined(_MSC_VER)
@@ -15,3 +29,5 @@ define AE_INLINE static inline __attribute((always_inline))
 #endif
 
 #define AE_UNREFERENCED_PARAMETER(x) (void)x
+
+/**@}*/

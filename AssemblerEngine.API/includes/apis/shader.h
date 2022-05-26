@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   shader.h
+ * @ingroup group_api
+ * @brief Shader API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #include <core/types.h>
@@ -19,3 +33,5 @@ struct ae_shader_api
 	void				(*set_blending)(struct ae_shader* shader, bool enable, uint32_t source, uint32_t destination);
 	void				(*set_depth_test)(struct ae_shader* shader, bool enable);
 };
+
+/**@}*/

@@ -1,3 +1,16 @@
+/*****************************************************************//**
+ * @file   vector.h
+ * @ingroup group_api
+ * @brief  
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
 #pragma once
 
 #include "types.h"
@@ -153,3 +166,5 @@ inline TYPE vector_##NAME##_last(struct vector_##NAME* vector)										\
 {																									\
 	return vector->data[vector->size - 1];															\
 }
+
+/**@}*/

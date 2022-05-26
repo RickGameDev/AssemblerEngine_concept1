@@ -1,6 +1,20 @@
-#pragma once
-#include <core/types.h>
+/*****************************************************************//**
+ * @file   logging.h
+ * @ingroup group_api
+ * @brief  Logging API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
 
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
+#pragma once
+
+#include <core/types.h>
 
 struct ae_logger;
 
@@ -61,3 +75,5 @@ struct ae_logging_api
 /// </summary>
 /// <param name="...">: variadic parameter to pass log string and values to pass to log string</param>
 #define ae_log_critical(...) ae_logging_api->log_main(LEVEL_CRITICAL, __FILE__, __LINE__, __VA_ARGS__)
+
+/**@}*/

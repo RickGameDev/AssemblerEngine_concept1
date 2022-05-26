@@ -1,3 +1,16 @@
+/*****************************************************************//**
+ * @file   input.h
+ * @ingroup group_api
+ * @brief  Input API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
 #pragma once
 
 #include <core/types.h>
@@ -276,3 +289,5 @@ struct ae_input_api
     enum ae_input_key_modifiers get_key_mod();
 	void (*poll_events)();
 };
+
+/**@}*/

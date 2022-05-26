@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   window.h
+ * @ingroup group_api
+ * @brief  Window API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+/**
+*@addtogroup group_api
+* @{
+*/
+
 #pragma once
 
 #include "core/types.h"
@@ -44,3 +58,5 @@ struct ae_window_api
 	void						(*show)(struct ae_window* window, const bool show);
 	struct ae_native_window*	(*get_native_window)(struct ae_window* window);
 };
+
+/**@}*/

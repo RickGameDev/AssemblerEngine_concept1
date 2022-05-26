@@ -3,7 +3,7 @@
 
 #include <apis/shader.h>
 #include <math/io.h>
-#include <math/struct.h>
+#include <math/mat4.h>
 
 #include <string.h>
 

@@ -36,16 +36,10 @@ static void ae_camera_destroy(struct ae_camera* camera)
 	free(camera);
 }
 
-static const float* ae_camera_get_view_projection(struct ae_camera* const camera)
-{
-	return &camera->view_projection[0][0];
-}
-
 static const struct ae_camera_api camera_api =
 {
 	.create_orthographic = ae_camera_create_orthograpic,
 	.destroy = ae_camera_destroy,
-	.get_view_projection = ae_camera_get_view_projection
 };
 
 AE_DLL_EXPORT void plugin_load(struct ae_api_registry_api* registry, bool reload)

@@ -1,0 +1,11 @@
+/**
+ * @defgroup group_main My Project Modules
+ * @brief All project modules
+ *
+ * @{
+ */
+
+/** @defgroup group_api AssemblerEngine.API reference*/
+/** @defgroup group_core AssemblerEngine.Core API reference*/
+
+/** @} */

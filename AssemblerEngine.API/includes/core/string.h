@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   string.h
+ * @ingroup group_api
+ * @brief  
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #include <stdint.h>
@@ -103,3 +117,5 @@ AE_STRING_SIZE_TYPE string_get_size(string str);
 /// <param name="str">: string to get length from</param>
 /// <returns>length of given string, returns 0 if string is NULL</returns>
 AE_STRING_SIZE_TYPE string_get_length(string str);
+
+/**@}*/

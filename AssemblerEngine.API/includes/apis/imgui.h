@@ -1,9 +1,24 @@
+/*****************************************************************//**
+ * @file   imgui.h
+ * @ingroup api_group
+ * @brief  Immediate Graphical User Interface API for creating engine widgets or drawing application UI
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #include <core/types.h>
 
 struct ae_window;
 
+/** /brief Viewport flags for enabling features of a viewport */
 enum ae_imgui_viewport_flags
 {
 	AE_VIEWPORT_DOCKABLE =	(1 << 0),
@@ -11,6 +26,7 @@ enum ae_imgui_viewport_flags
 	AE_VIEWPORT_FLOATING =	(1 << 2)
 };
 
+/** @brief ImGui API struct containing function pointers to draw GUI*/
 struct ae_imgui_api
 {
 	void (*init)(struct ae_window* window);
@@ -32,3 +48,5 @@ struct ae_imgui_api
 	void (*styles_push_background_color)(vec4 color);
 	void (*styles_pop_background_color)();
 };
+
+/**@}*/

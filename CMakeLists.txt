@@ -7,6 +7,7 @@ project (AssemblerEngine
 	HOMEPAGE_URL "https://github.com/RickGameDev/AssemblerEngine"
 )
 
+#option(BUILD_DOC "Build documentation" ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
@@ -24,3 +25,5 @@ add_subdirectory (AssemblerEngine.API)
 add_subdirectory (AssemblerEngine.Plugins)
 add_subdirectory (AssemblerEngine.Core)
 add_subdirectory (AssemblerEngine)
+
+include("docs/DoxyGen.cmake")

@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   plugin_registry.h
+ * @ingroup group_api
+ * @brief  Plugin registry API
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #include "core/types.h"
@@ -17,3 +31,5 @@ struct ae_plugin_registry_api
 	void (*unload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
 	void (*reload)(struct ae_plugin_registry* registry, struct ae_api_registry_api* api_registry, uint32_t id);
 };
+
+/**@}*/

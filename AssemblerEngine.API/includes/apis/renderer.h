@@ -1,3 +1,17 @@
+/*****************************************************************//**
+ * @file   renderer.h
+ * @ingroup group_api
+ * @brief Render API using one of the registered rendering backends
+ * 
+ * @author RickNijhuis
+ * @date   May 2022
+ *********************************************************************/
+
+ /**
+ *@addtogroup group_api
+ * @{
+ */
+
 #pragma once
 
 #include "core/types.h"
@@ -34,3 +48,5 @@ struct ae_renderer_api
 	void					(*render_batch_draw)(struct ae_render_batch* batch, struct ae_draw_params* const params);
 	void					(*render_batch_draw_textured)(struct ae_render_batch* batch, struct ae_textured_draw_params* const params);
 };
+
+/**@}*/
