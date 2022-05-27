@@ -1,5 +1,5 @@
-#include "AssemblerEngine/api_registry.h"
-#include "hashmap.h"
+#include "ae_api_registry_internal.h"
+#include "ae_hashmap_internal.h"
 
 #include <stdint.h>
 #include <stdlib.h>

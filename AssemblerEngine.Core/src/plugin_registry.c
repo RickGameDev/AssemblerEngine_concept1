@@ -1,9 +1,11 @@
-#include "AssemblerEngine/plugin_registry.h"
-#include "AssemblerEngine/api_registry.h"
+#include "ae_plugin_registry_internal.h"
+#include "ae_api_registry_internal.h"
+#include "ae_hashmap_internal.h"
+#include "ae_filesystem.h"
+
 #include <apis/plugin_registry.h>
 #include <core/core.h>
-#include "filesystem.h"
-#include "hashmap.h"
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -141,8 +143,8 @@ static void ae_plugin_load(struct ae_plugin_registry* registry, struct ae_api_re
 		};
 
 
-		plugin.load = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
-		plugin.unload = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
+		//plugin.load = (ae_plugin_load_fn)LOAD_FUNCTION(library, "plugin_load");
+		//plugin.unload = (ae_plugin_unload_fn)LOAD_FUNCTION(library, "plugin_unload");
 
 		if (!plugin.load || !plugin.unload)
 		{

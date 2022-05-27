@@ -1,4 +1,4 @@
-#include "hashmap.h"
+#include "ae_hashmap_internal.h"
 
 #include <core/core.h>
 

@@ -7,6 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct ae_os_filesystem_it
+{
+    HANDLE              handle;
+    WIN32_FIND_DATAW    data;
+    wchar_t*            base_path;
+    uint32_t            base_path_size;
+};
+
 struct ae_os_filesystem_it* ae_os_filesystem_it_create(const char* path)
 {
     struct ae_os_filesystem_it* it = malloc(sizeof(*it));
@@ -58,6 +66,7 @@ struct ae_os_filesystem_it* ae_os_filesystem_it_create(const char* path)
     if (it->handle == INVALID_HANDLE_VALUE)
     {
         free(it->base_path);
+        free(it);
         return NULL;
     }
 

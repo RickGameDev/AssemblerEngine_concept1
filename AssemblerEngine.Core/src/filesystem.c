@@ -1,4 +1,4 @@
-#include "filesystem.h"
+#include "ae_filesystem.h"
 
 #include <core/core.h>
 
@@ -86,10 +86,8 @@ bool ae_filesystem_it_init(struct ae_filesystem_it* it, struct ae_path* path)
 		memcpy(tmp_path, path->path, path->length);
 
 #ifdef MSVC
-
-#endif // MSVC
-
 		strcat_s(tmp_path, AE_PATH_MAX_LENGTH, "\\*");
+#endif // MSVC
 
 #ifdef _WIN32
 		it->handle = FindFirstFile(tmp_path, &it->data);

@@ -1,6 +1,6 @@
-#include <AssemblerEngine/api_registry.h>
-#include <AssemblerEngine/plugin_registry.h>
-#include <AssemblerEngine/ae_filesystem_internal.h>
+//#include <AssemblerEngine/api_registry.h>
+//#include <AssemblerEngine/plugin_registry.h>
+//#include <AssemblerEngine/ae_filesystem_internal.h>
 
 #include <core/vector.h>
 
@@ -15,17 +15,17 @@
 #include <apis/opengl_backend.h>
 #include <apis/imgui.h>
 
-static const struct ae_create_window_params main_window_params =
-{
-	.title = "test",
-	.position_x = 0,
-	.position_y = 0,
-	.height = 720,
-	.width = 1280,
-	.flags = AE_WINDOW_DECORATED | AE_WINDOW_VISIBLE
-};
+//static const struct ae_create_window_params main_window_params =
+//{
+//	.title = "test",
+//	.position_x = 0,
+//	.position_y = 0,
+//	.height = 720,
+//	.width = 1280,
+//	.flags = AE_WINDOW_DECORATED | AE_WINDOW_VISIBLE
+//};
 
-char debug[255];
+//char debug[255];
 
 //int main()
 //{
@@ -96,24 +96,24 @@ char debug[255];
 
 int main()
 {
-	struct ae_os_filesystem_it* it = ae_os_filesystem_it_create(".");
+	//struct ae_os_filesystem_it* it = ae_os_filesystem_it_create(".");
 
-	char path[512];
-	char name[512];
-	char nameext[512];
-	char ext[512];
-	while (ae_os_filesystem_it_next(it))
-	{
-		ae_os_filesystem_it_get_full_path(it, path, 512);
-		ae_os_filesystem_it_get_name(it, name, 512);
-		ae_os_filesystem_it_get_name_with_ext(it, nameext, 512);
-		ae_os_filesystem_it_get_extension(it, ext, 512);
-		printf("path: %s \n", path);
-		printf("name: %s \n", name);
-		printf("nameext: %s \n", nameext);
-		printf("ext: %s \n\n", ext);
-	}
+	//char path[512];
+	//char name[512];
+	//char nameext[512];
+	//char ext[512];
+	//while (ae_os_filesystem_it_next(it))
+	//{
+	//	ae_os_filesystem_it_get_full_path(it, path, 512);
+	//	ae_os_filesystem_it_get_name(it, name, 512);
+	//	ae_os_filesystem_it_get_name_with_ext(it, nameext, 512);
+	//	ae_os_filesystem_it_get_extension(it, ext, 512);
+	//	printf("path: %s \n", path);
+	//	printf("name: %s \n", name);
+	//	printf("nameext: %s \n", nameext);
+	//	printf("ext: %s \n\n", ext);
+	//}
 
-	(void)it;
+	//(void)it;
 
 }
