@@ -98,11 +98,20 @@ int main()
 {
 	struct ae_os_filesystem_it* it = ae_os_filesystem_it_create(".");
 
-	char path[500];
+	char path[512];
+	char name[512];
+	char nameext[512];
+	char ext[512];
 	while (ae_os_filesystem_it_next(it))
 	{
-		ae_os_filesystem_it_get_full_path(it, path, 500);
-		printf(path);
+		ae_os_filesystem_it_get_full_path(it, path, 512);
+		ae_os_filesystem_it_get_name(it, name, 512);
+		ae_os_filesystem_it_get_name_with_ext(it, nameext, 512);
+		ae_os_filesystem_it_get_extension(it, ext, 512);
+		printf("path: %s \n", path);
+		printf("name: %s \n", name);
+		printf("nameext: %s \n", nameext);
+		printf("ext: %s \n\n", ext);
 	}
 
 	(void)it;

@@ -121,44 +121,55 @@ uint32_t ae_os_filesystem_it_get_name(struct ae_os_filesystem_it* it, char* buff
     uint32_t name_size = (uint32_t)WideCharToMultiByte(CP_UTF8, 0, it->data.cFileName, -1, NULL, 0, NULL, NULL);
 
     if (dot)
-        name_size = (size_t)(dot - it->data.cFileName);
+        name_size = (uint32_t)(dot - it->data.cFileName);
 
     if (name_size > size)
         return 0;
 
     WideCharToMultiByte(CP_UTF8, 0, it->data.cFileName, -1, buffer, (int32_t)(name_size > size ? size : name_size), NULL, NULL);
 
+    buffer[name_size] = '\0';
+
     return name_size;
 }
 
 uint32_t ae_os_filesystem_it_get_name_with_ext(struct ae_os_filesystem_it* it, char* buffer, uint32_t size)
 {
+    assert(it);
+
     uint32_t name_size = (uint32_t)WideCharToMultiByte(CP_UTF8, 0, it->data.cFileName, -1, NULL, 0, NULL, NULL);
+
+    if (name_size > size)
+        return 0;
 
     return WideCharToMultiByte(CP_UTF8, 0, it->data.cFileName, -1, buffer, (int32_t)(name_size > size ? size : name_size), NULL, NULL);
 }
-//
-//char* ae_os_filesystem_it_get_extension(struct ae_os_filesystem_it* it)
-//{
-//
-//}
-//
-//size_t ae_os_filesystem_it_get_size(struct ae_os_filesystem_it* it)
-//{
-//
-//}
-//       
-//void ae_os_filesystem_rename(const char* old_path, const char* new_path)
-//{
-//
-//}
-//
-//void ae_os_filesystem_copy(const char* path, const char* dest)
-//{
-//
-//}
-//
-//struct ae_os_filesystem_api* ae_os_filesystem_api_init()
-//{
-//
-//}
+
+uint32_t ae_os_filesystem_it_get_extension(struct ae_os_filesystem_it* it, char* buffer, uint32_t size)
+{
+    assert(it);
+
+    wchar_t* dot = wcsrchr(it->data.cFileName, L'.');
+
+    uint32_t ext_size = (uint32_t)WideCharToMultiByte(CP_UTF8, 0, dot + 1, -1, NULL, 0, NULL, NULL);
+
+    if (ext_size > size)
+        return 0;
+
+    WideCharToMultiByte(CP_UTF8, 0, dot + 1, -1, buffer, (int32_t)(ext_size > size ? size : ext_size), NULL, NULL);
+
+    buffer[ext_size] = '\0';
+
+    return ext_size;
+}
+
+size_t ae_os_filesystem_it_get_size(struct ae_os_filesystem_it* it)
+{
+    assert(it);
+
+    LARGE_INTEGER file_size = { 0 };
+    file_size.LowPart = it->data.nFileSizeLow;
+    file_size.HighPart = it->data.nFileSizeHigh;
+
+    return (size_t)file_size.QuadPart;
+}

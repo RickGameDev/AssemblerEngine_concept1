@@ -31,10 +31,5 @@ uint32_t						ae_os_filesystem_it_get_full_path(struct ae_os_filesystem_it* it, 
 bool						    ae_os_filesystem_it_is_dir(struct ae_os_filesystem_it* it);
 uint32_t						ae_os_filesystem_it_get_name(struct ae_os_filesystem_it* it, char* buffer, uint32_t size);
 uint32_t						ae_os_filesystem_it_get_name_with_ext(struct ae_os_filesystem_it* it, char* buffer, uint32_t size);
-char*                           ae_os_filesystem_it_get_extension(struct ae_os_filesystem_it* it);
-//size_t                          ae_os_filesystem_it_get_size(struct ae_os_filesystem_it* it);
-//
-//void                            ae_os_filesystem_rename(const char* old_path, const char* new_path);
-//void                            ae_os_filesystem_copy(const char* path, const char* dest);
-//
-//struct ae_os_filesystem_api*    ae_os_filesystem_api_init();
+uint32_t                        ae_os_filesystem_it_get_extension(struct ae_os_filesystem_it* it, char* buffer, uint32_t size);
+size_t                          ae_os_filesystem_it_get_size(struct ae_os_filesystem_it* it);
